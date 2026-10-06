@@ -269,3 +269,357 @@ function updateFinal(){
   const pct=Math.round(score/questions.length*100);
   result.innerHTML='CASE REVIEW: '+score+'/8 ('+pct+'%) · Evidence collected '+solved.size+'/'+evidenceTarget+'<br><span style="font-weight:600">'+(pct>=88?'Strong investigation: your pivots and evidence logic are defensible.':pct>=63?'Good case understanding — revisit the highlighted decisions.':'Re-run the investigation games and focus on why each pivot is justified.')+'</span>';
 }
+
+// ===== PPT deep-dive flip cards: every teaching section gets more lecture detail =====
+const pptDeepDive={
+  top:[
+    {
+      title:'What this week is really teaching',
+      teaser:'One case study, three major skills.',
+      bullets:[
+        'Perform a threat analysis from a single reported indicator through to a fuller intrusion reconstruction.',
+        'Use manual investigation skills alongside tools such as SIFT, VirusTotal, Wireshark, Hybrid Analysis and MISP.',
+        'Synthesize findings into the Diamond Model and Cyber Kill Chain so evidence gaps become visible.',
+        'Critically evaluate third-party intelligence rather than treating outside reporting as automatically true.',
+        'The end goal is practical: identify the source of the threat and support actions that stop it.'
+      ]
+    },
+    {
+      title:'Why pivoting is the core skill',
+      teaser:'A single IOC becomes an anchor for the next question.',
+      bullets:[
+        'An IP, hash, domain, URL or email can be the first anchor point.',
+        'The analyst searches across data sources for related events, flows and artefacts.',
+        'Every useful new artefact becomes another pivot target.',
+        'Speed matters, so analytical and modelling skill must become repeatable and familiar.',
+        'Automation is desirable, but manual proficiency remains essential when tools are unavailable or incomplete.'
+      ]
+    },
+    {
+      title:'The case-study promise',
+      teaser:'The investigation is supposed to grow as evidence grows.',
+      bullets:[
+        'The chapter uses one continuous intrusion scenario rather than disconnected examples.',
+        'It begins with a reported C2 IP and progressively reconstructs the attack.',
+        'External intelligence, internal telemetry, network evidence, forensics and malware analysis all contribute.',
+        'Frameworks organize the growing evidence rather than replacing investigative judgement.',
+        'MISP is introduced only after the manual investigation so students understand what is being automated.'
+      ]
+    }
+  ],
+  process:[
+    {
+      title:'Step 1–2: identify, then validate',
+      teaser:'Do not pivot blindly from an untrusted clue.',
+      bullets:[
+        'Start with an indicator such as an IP, domain, hash, URL, bank account or email address with metadata.',
+        'Contextualization asks what the indicator means, why it matters and what scope it has.',
+        'Source reliability must be judged before analyst time is committed to wider pivoting.',
+        'Even a government or other third-party report still requires independent validation.',
+        'Only after identification and validation should the analyst pivot through other data sources.'
+      ]
+    },
+    {
+      title:'Step 3–4: pivot, then discover',
+      teaser:'This is where one indicator becomes many.',
+      bullets:[
+        'Search internal and/or external data to determine whether the indicator is present and how it behaves.',
+        'A single IP may expose URLs, domains, files or other artefacts.',
+        'Each newly discovered indicator is contextualised and validated again.',
+        'The process is repeatable rather than a one-off search.',
+        'Continue until the picture is sufficiently complete and no useful pivot remains.'
+      ]
+    },
+    {
+      title:'Why the process is cyclic',
+      teaser:'The loop is the method, not just a diagram.',
+      bullets:[
+        'The objective is to progressively populate the Diamond Model and Cyber Kill Chain.',
+        'Every task is performed because it may reveal evidence that closes one of those gaps.',
+        'New indicators continuously feed back into earlier steps.',
+        'A “finished” investigation is therefore evidence-driven, not based on completing a fixed number of searches.',
+        'The realistic stop condition is enough evidence to conclude on the specific threat plus no further useful pivots.'
+      ]
+    }
+  ],
+  case:[
+    {
+      title:'External validation: WHOIS + VirusTotal',
+      teaser:'External intelligence makes the report plausible, not final.',
+      bullets:[
+        'WHOIS shows registration context for 125.19.103.198, including organization and associated contact information.',
+        'VirusTotal shows 3 of 87 vendors flagging the address as malicious and one as suspicious.',
+        'Relations link the address with known malicious files and prior activity.',
+        'A minority detection count does not automatically mean the indicator is safe.',
+        'Law-enforcement reporting plus external intelligence is enough to justify an internal investigation.'
+      ]
+    },
+    {
+      title:'Internal validation: network + proxy logs',
+      teaser:'Now prove whether ABC was actually touched.',
+      bullets:[
+        'Network telemetry shows repeated TCP sessions involving 172.16.99.12 and the reported C2.',
+        'nslookup identifies 172.16.99.12 as the ABC web proxy server.',
+        'Proxy logs reveal 192.168.8.4, 192.168.8.14 and 192.168.8.23 communicating with the C2.',
+        'The FTP URL and DOC/RAR MIME type suggest file exchange.',
+        'Independent internal hosts contacting the flagged infrastructure strongly corroborate compromise.'
+      ]
+    },
+    {
+      title:'Why timestamp matching matters',
+      teaser:'Independent sources should agree on the same story.',
+      bullets:[
+        'Network logs and proxy logs show matching timestamp patterns for the same activity.',
+        'Repeated matching timestamps reduce the chance that the finding is coincidence.',
+        'Cross-source corroboration turns suspicion into a much stronger validated finding.',
+        'At this stage the case should involve incident response and forensics teams.',
+        'The CTI investigation still continues because delivery, capability and adversary are not yet fully explained.'
+      ]
+    }
+  ],
+  frameworks:[
+    {
+      title:'Initial Diamond Model state',
+      teaser:'Two vertices are known, two are gaps.',
+      bullets:[
+        'Infrastructure: 125.19.103.198 is confirmed adversary infrastructure.',
+        'Victim: 192.168.8.4, 192.168.8.14 and 192.168.8.23 are confirmed internal victims.',
+        'Adversary: still unknown at this stage.',
+        'Capability/TTP: also unresolved at this stage.',
+        'The point of classification is to reveal exactly which question the next pivot must answer.'
+      ]
+    },
+    {
+      title:'Initial Kill Chain state',
+      teaser:'Only Command & Control is firmly populated at first.',
+      bullets:[
+        'The COA matrix crosses seven Kill Chain phases with courses of action such as Discovery, Detect, Deny and Disrupt.',
+        'At this point the confirmed C2 IP sits in the Command & Control phase.',
+        'Reconnaissance through Installation remain mostly empty.',
+        'An empty phase is not failure — it is a prioritized research gap.',
+        'The proxy URL structure becomes the next useful pivot because it may expose more infrastructure and capability.'
+      ]
+    },
+    {
+      title:'Why both frameworks are needed',
+      teaser:'They answer different questions about the same evidence.',
+      bullets:[
+        'The Diamond Model asks who and what: adversary, infrastructure, victim and capability.',
+        'The Kill Chain asks when and how far the intrusion progressed.',
+        'Each attack phase may have its own Diamond event.',
+        'Empty Diamond vertices and empty Kill Chain phases both reveal missing evidence.',
+        'Together they feed CTI reporting and the course-of-action matrix.'
+      ]
+    }
+  ],
+  host:[
+    {
+      title:'Exfiltration: volume plus context',
+      teaser:'Large traffic alone is not proof.',
+      bullets:[
+        'The analyst checks outbound FTP, HTTP and SMTP activity with attention to TCP ports 20 and 21.',
+        'More than 1 GB is sent to the known C2 from three hosts and more than 2.5 GB from a fourth.',
+        'Large transfers can be normal in some organizations, so volume alone is not enough.',
+        'The known C2 relationship and outbound FTP context make the transfer much more significant.',
+        'Packet analysis is then used to understand exactly what left the network.'
+      ]
+    },
+    {
+      title:'Wireshark exposes plain FTP',
+      teaser:'Raw packets reveal credentials and file movement.',
+      bullets:[
+        'The packet capture shows USER and PASS exchanges in plaintext.',
+        'A RETR command downloads file1.exe.',
+        'A STOR command transmits collected_data.rar.',
+        'The observed protocol details clarify the attack methodology and impact.',
+        'With SFTP, the content would be much more difficult to inspect directly because the session is encrypted.'
+      ]
+    },
+    {
+      title:'Memory-forensics workflow',
+      teaser:'Process → connection → path → dump → hash.',
+      bullets:[
+        'pslist / pstree / psxview identifies reader_sl.exe running under explorer.exe.',
+        'connscan / sockets links a process to 46.101.245.8:8080, revealing new infrastructure.',
+        'cmdline resolves the full Adobe Reader path.',
+        'procdump / memdump extracts the suspicious executable and memory region.',
+        'md5deep produces a hash that VirusTotal confirms as malicious with 29 of 65 vendors flagging it.'
+      ]
+    }
+  ],
+  malware:[
+    {
+      title:'Static vs dynamic malware analysis',
+      teaser:'Structure and behaviour answer different questions.',
+      bullets:[
+        'Dynamic analysis observes what the malware does when executed.',
+        'Code/static analysis examines structure and artefacts directly.',
+        'VirusTotal provides detection, detail, relation and behaviour views.',
+        'Sandbox behaviour includes opening files, writing files, deleting Windows logs and changing the registry.',
+        'Hybrid Analysis provides additional behavioural detail beyond a simple hash reputation check.'
+      ]
+    },
+    {
+      title:'MITRE ATT&CK mapping',
+      teaser:'Observed behaviour becomes structured capability.',
+      bullets:[
+        'The case maps behaviour such as Service Execution, Hooking, Software Packaging and Application Window Discovery.',
+        'It also includes Query Registry, System Time Discovery, RDP-related activity and Data Compressed.',
+        'Mapped tactics span Execution, Persistence, Privilege Escalation, Defense Evasion, Credential Access, Discovery, Lateral Movement and Exfiltration.',
+        'These findings help fill the capability/TTP vertex of the Diamond Model.',
+        'They also strengthen the middle and later phases of the Kill Chain.'
+      ]
+    },
+    {
+      title:'Project Cobra + cautious attribution',
+      teaser:'Motive becomes clearer, attribution remains probabilistic.',
+      bullets:[
+        'collected_data.rar contains engineering documents tied to a project called Cobra.',
+        'The stolen material includes design and product-strategy information, supporting an espionage hypothesis.',
+        'Public reports connect the malware with APT19 / Codoso.',
+        'The adversary vertex is still the hardest part of the Diamond Model to fill with high confidence.',
+        'Analysts should report the relationship as supported or likely when the evidence does not justify certainty.'
+      ]
+    }
+  ],
+  rootcause:[
+    {
+      title:'Weaponized PDF',
+      teaser:'The backdoor traces back to research_tech.pdf.',
+      bullets:[
+        'research_tech.pdf and a temporary executable are found in Outlook temporary files.',
+        'The PDF contains embedded JavaScript that launches reader_sl.exe.',
+        'pdf-parser shows 12 end-of-file markers, which is highly unusual for a genuine PDF.',
+        'The file is therefore treated as a weaponized document carrying a malicious payload.',
+        'Its location in Outlook temporary files points the investigation toward email delivery.'
+      ]
+    },
+    {
+      title:'Spear-phishing delivery',
+      teaser:'A believable research pretext caused the human click.',
+      bullets:[
+        'The victim receives a research-themed email with the malicious PDF attached.',
+        'The email persona claims to be Catherine Majabu from a fictitious EXX group.',
+        'The victim replies to thank the sender, supporting a successful social-engineering interaction.',
+        'The targeted and personalized message is a textbook spear-phishing delivery vector.',
+        'The organizational lesson is continuous phishing-awareness training.'
+      ]
+    },
+    {
+      title:'Headers, passive DNS and reconnaissance',
+      teaser:'Rewind further to learn how the attacker selected the victim.',
+      bullets:[
+        'Most email fields can be spoofed, but the Received chain is much harder to falsify convincingly.',
+        'The chain exposes 194.150.215.153, which VirusTotal partially flags and passive DNS links to suspicious domains.',
+        'ABC had publicly named department heads and published their email addresses.',
+        'Apache logs show 41.168.5.201 repeatedly visiting those employee pages.',
+        'The visits occur nearly three months before the intrusion, consistent with deliberate reconnaissance.'
+      ]
+    }
+  ],
+  misp:[
+    {
+      title:'The full indicator pivot chain',
+      teaser:'Seven linked events reconstruct the intrusion end to end.',
+      bullets:[
+        'Reconnaissance: public staff pages and email addresses expose targets.',
+        'Delivery: spear-phishing from 194.150.215.153 carries research_tech.pdf.',
+        'Exploit/install: the weaponized PDF triggers and installs reader_sl.exe / executable.1640.exe.',
+        'Command and Control: the malware calls 125.19.103.198 using the /sys/files/ path.',
+        'Actions on objectives: Project Cobra data is exfiltrated to 46.168.5.140 using FTP/HTTP.'
+      ]
+    },
+    {
+      title:'Why automation comes after manual skill',
+      teaser:'Tools scale reasoning; they do not create it.',
+      bullets:[
+        'The manual case required many individually validated pivots across different tools and data sources.',
+        'SIEM and TIP products can simplify correlation and dissemination.',
+        'A CTI analyst should still understand log formats, pivot logic and manual intrusion analysis.',
+        'Without manual literacy, automated outputs are harder to validate or troubleshoot.',
+        'MISP operationalizes a process the analyst already understands.'
+      ]
+    },
+    {
+      title:'MISP operational workflow',
+      teaser:'Feeds → event → attributes → enrichment → publish.',
+      bullets:[
+        'Enable built-in or custom feeds so external indicators can be correlated.',
+        'Create an event with detection date, distribution setting and threat level.',
+        'Add Cyber Kill Chain outputs as attributes, starting with infrastructure such as the C2 IP.',
+        'Enrich the event to pull in further correlated information from configured feeds.',
+        'Publish only when ready so the analysis becomes reusable intelligence for the organization or wider community.'
+      ]
+    }
+  ],
+  final:[
+    {
+      title:'Five chapter takeaways',
+      teaser:'The whole lecture in five statements.',
+      bullets:[
+        'Pivoting is the core skill: identify, contextualise, pivot and discover repeatedly.',
+        'Diamond Model and Kill Chain work together to track actor, infrastructure, victim, capability and phase.',
+        'Packet and memory forensics help answer how the intrusion happened.',
+        'Attribution supports action but may remain uncertain.',
+        'MISP turns a one-off investigation into reusable, shareable organizational intelligence.'
+      ]
+    },
+    {
+      title:'Checklist for your next investigation',
+      teaser:'A transferable method beyond this case.',
+      bullets:[
+        'Start with one validated indicator instead of chasing every lead at once.',
+        'Pivot externally and internally because the two views complement one another.',
+        'Cross-reference independent sources so evidence is corroborated.',
+        'Update frameworks as you go; empty vertices and phases tell you where to dig next.',
+        'Capture and share the result so the investigation benefits more than one analyst.'
+      ]
+    },
+    {
+      title:'What the tools contributed',
+      teaser:'Different tools answered different questions.',
+      bullets:[
+        'WHOIS and VirusTotal provided external context and reputation.',
+        'Network and proxy logs established internal contact and victim hosts.',
+        'Wireshark exposed packet-level FTP activity.',
+        'SIFT / Volatility reconstructed processes, connections and malicious files.',
+        'MISP stored, correlated, enriched and shared the completed CTI case.'
+      ]
+    }
+  ]
+};
+
+function buildPptDive(sectionId,cards){
+  const section=document.getElementById(sectionId);
+  if(!section||section.querySelector('.ppt-dive'))return;
+  const wrap=document.createElement('section');
+  wrap.className='ppt-dive';
+  wrap.innerHTML='<div class="ppt-dive-head"><div><span>PPT DEEP DIVE</span><h3>Flip for the lecture detail behind this section</h3></div><div class="ppt-dive-tools"><button type="button" class="ppt-flip-all">Flip all</button><button type="button" class="ppt-front-all">Fronts</button></div></div><div class="ppt-card-grid"></div>';
+  const grid=wrap.querySelector('.ppt-card-grid');
+
+  cards.forEach((card,index)=>{
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='ppt-flip';
+    btn.setAttribute('aria-pressed','false');
+    btn.innerHTML='<div class="ppt-flip-inner"><div class="ppt-face ppt-front"><small>DETAIL '+String(index+1).padStart(2,'0')+'</small><h4>'+card.title+'</h4><p>'+card.teaser+'</p><em>CLICK TO FLIP ↻</em></div><div class="ppt-face ppt-back"><h4>'+card.title+'</h4><ul>'+card.bullets.map(x=>'<li>'+x+'</li>').join('')+'</ul></div></div>';
+    btn.addEventListener('click',()=>{
+      const on=!btn.classList.contains('flipped');
+      btn.classList.toggle('flipped',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    grid.appendChild(btn);
+  });
+
+  const header=section.querySelector('.chapter-head');
+  if(header) header.insertAdjacentElement('afterend',wrap);
+  else{
+    const heroGrid=section.querySelector('.hero-grid');
+    if(heroGrid) heroGrid.insertAdjacentElement('afterend',wrap);
+    else section.prepend(wrap);
+  }
+
+  wrap.querySelector('.ppt-flip-all').addEventListener('click',()=>$$('.ppt-flip',wrap).forEach(c=>{c.classList.add('flipped');c.setAttribute('aria-pressed','true')}));
+  wrap.querySelector('.ppt-front-all').addEventListener('click',()=>$$('.ppt-flip',wrap).forEach(c=>{c.classList.remove('flipped');c.setAttribute('aria-pressed','false')}));
+}
+Object.entries(pptDeepDive).forEach(([id,cards])=>buildPptDive(id,cards));
