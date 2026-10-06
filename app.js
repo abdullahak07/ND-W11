@@ -2,7 +2,7 @@ const $=(s,c=document)=>c.querySelector(s);
 const $$=(s,c=document)=>[...c.querySelectorAll(s)];
 
 const solved=new Set();
-const evidenceTarget=12;
+const evidenceTarget=15;
 function earn(key){
   if(!solved.has(key)){solved.add(key);$('#evidenceCount').textContent=solved.size+' / '+evidenceTarget+' evidence items';}
 }
