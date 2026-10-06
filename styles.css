@@ -71,3 +71,174 @@ footer{border-top:1px solid #252d37;padding:24px 0 40px;display:flex;justify-con
   .synthesis strong{margin-left:0;width:100%}
   footer{flex-direction:column;gap:7px}
 }
+
+/* ===== PPT deep-dive flip cards on every section ===== */
+.ppt-dive{
+  margin:26px 0 4px;
+  border-top:1px dashed #394451;
+  padding-top:18px;
+}
+.ppt-dive-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:18px;
+  margin-bottom:12px;
+}
+.ppt-dive-head>div>span{
+  display:block;
+  color:var(--cyan);
+  font-size:.57rem;
+  letter-spacing:.13em;
+  font-weight:900;
+}
+.ppt-dive-head h3{
+  margin:5px 0 0;
+  font-size:1rem;
+}
+.ppt-dive-head p{
+  margin:0;
+  max-width:620px;
+  color:var(--muted);
+  font-size:.69rem;
+  line-height:1.45;
+}
+.ppt-dive-tools{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.ppt-dive-tools button{
+  border:1px solid #3a4655;
+  background:#121821;
+  color:#fff;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:.61rem;
+  font-weight:850;
+}
+.ppt-dive-tools button:hover{border-color:var(--lime);color:var(--lime)}
+.ppt-card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.ppt-flip{
+  position:relative;
+  width:100%;
+  height:245px;
+  padding:0;
+  border:0;
+  background:transparent;
+  perspective:1200px;
+  text-align:left;
+}
+.ppt-flip-inner{
+  position:relative;
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform .48s cubic-bezier(.2,.7,.2,1);
+}
+.ppt-flip.flipped .ppt-flip-inner{transform:rotateY(180deg)}
+.ppt-face{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  height:100%;
+  border-radius:14px;
+  border:1px solid #303a46;
+  padding:15px;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  overflow:auto;
+}
+.ppt-front{
+  background:
+    linear-gradient(180deg,rgba(201,255,82,.025),transparent 45%),
+    #11161d;
+}
+.ppt-front:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:linear-gradient(180deg,var(--lime),var(--cyan));
+  border-radius:14px 0 0 14px;
+}
+.ppt-front small{
+  color:var(--lime);
+  font-size:.55rem;
+  letter-spacing:.12em;
+  font-weight:900;
+}
+.ppt-front h4{
+  margin:auto 0 8px;
+  font-family:Georgia,serif;
+  font-size:1.28rem;
+  line-height:1.08;
+}
+.ppt-front p{
+  margin:0 0 10px;
+  color:#9ba5b4;
+  font-size:.7rem;
+  line-height:1.43;
+}
+.ppt-front em{
+  margin-top:auto;
+  color:var(--orange);
+  font-style:normal;
+  font-size:.58rem;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.ppt-back{
+  transform:rotateY(180deg);
+  background:#07090c;
+  border-color:#405064;
+}
+.ppt-back h4{
+  margin:0 0 9px;
+  color:var(--yellow);
+  font-size:.86rem;
+}
+.ppt-back ul{
+  margin:0;
+  padding-left:17px;
+}
+.ppt-back li{
+  color:#c8d1df;
+  font-size:.67rem;
+  line-height:1.42;
+  margin-bottom:7px;
+}
+.ppt-back li:last-child{margin-bottom:0}
+.ppt-flip:hover .ppt-front{
+  border-color:#536273;
+  transform:translateY(-2px);
+}
+.ppt-flip:focus-visible{
+  outline:3px solid var(--cyan);
+  outline-offset:3px;
+  border-radius:14px;
+}
+.hero .ppt-dive{
+  margin-top:30px;
+}
+.hero .ppt-dive-head p{color:#8994a4}
+@media(max-width:1180px){
+  .ppt-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .ppt-dive-head{display:block}
+  .ppt-dive-tools{margin-top:10px}
+  .ppt-card-grid{grid-template-columns:1fr}
+  .ppt-flip{height:230px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ppt-flip-inner{transition:none}
+}
