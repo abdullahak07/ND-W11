@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COMP6012 Week 11 · Operation Cobra</title>
+<meta name="theme-color" content="#0a0c10">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="noise"></div>
+<div id="scrollProgress"></div>
+
+<header class="casebar">
+  <a class="casebrand" href="#top"><span class="stamp">W11</span><span><b>OPERATION COBRA</b><small>Threat Modeling & Analysis · Practical Use Cases</small></span></a>
+  <div class="case-status"><span class="pulse"></span><b>CASE OPEN</b><span id="evidenceCount">0 / 12 evidence items</span></div>
+  <button class="case-jump" data-jump="#final">Final Briefing</button>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow">COMP6012 · WEEK 11 · LIVE INTRUSION INVESTIGATION</div>
+      <h1>ONE IP.<br><span>ONE THREAD.</span><br>A WHOLE ATTACK.</h1>
+      <p>You begin with a single reported command-and-control address. Your job is to validate it, pivot across evidence, reconstruct the intrusion, map it to the Diamond Model and Cyber Kill Chain, and finally turn the investigation into reusable CTI.</p>
+      <div class="hero-actions"><button class="primary" data-jump="#process">Open case file</button><button class="secondary" id="caseReset">Reset investigation</button></div>
+      <div class="brief">
+        <div><span>STARTING IOC</span><b>125.19.103.198</b></div>
+        <div><span>CASE</span><b>ABC Company</b></div>
+        <div><span>OBJECTIVE</span><b>Find source → stop threat</b></div>
+      </div>
+    </div>
+    <div class="hero-board">
+      <div class="board-head"><span>LIVE EVIDENCE BOARD</span><small>connections appear as you solve the case</small></div>
+      <svg class="board-lines" viewBox="0 0 600 520" aria-hidden="true">
+        <path class="line l1" d="M295 70 C285 125 160 118 155 175"/>
+        <path class="line l2" d="M305 70 C320 125 455 120 452 176"/>
+        <path class="line l3" d="M155 210 C190 260 260 260 295 312"/>
+        <path class="line l4" d="M452 210 C420 260 345 260 310 312"/>
+        <path class="line l5" d="M300 350 C300 405 300 420 300 465"/>
+      </svg>
+      <div class="e-node n0 unlocked"><span>01</span><b>C2 IP</b><small>125.19.103.198</small></div>
+      <div class="e-node n1" data-evidence="external"><span>02</span><b>External intel</b><small>WHOIS + VirusTotal</small></div>
+      <div class="e-node n2" data-evidence="hosts"><span>03</span><b>Victim hosts</b><small>3 internal clients</small></div>
+      <div class="e-node n3" data-evidence="malware"><span>04</span><b>Malware</b><small>reader_sl.exe</small></div>
+      <div class="e-node n4" data-evidence="phish"><span>05</span><b>Delivery</b><small>weaponized PDF</small></div>
+      <div class="e-node n5" data-evidence="exfil"><span>06</span><b>Objective</b><small>Project Cobra exfil</small></div>
+    </div>
+  </div>
+  <div class="scroll-cue">SCROLL TO INVESTIGATE <i>↓</i></div>
+</section>
+
+<section class="chapter" id="process">
+  <div class="chapter-tag">01 / ANALYSIS PROCESS</div>
+  <div class="chapter-head">
+    <div><span class="kicker">THE INVESTIGATOR'S LOOP</span><h2>Pivoting turns one clue into a case.</h2></div>
+    <p>The analysis process is cyclic, not linear. Every new indicator becomes the next anchor point until no useful pivot remains.</p>
+  </div>
+
+  <div class="cycle-stage">
+    <div class="cycle-core"><span>PIVOT</span><b>repeat until evidence stops growing</b></div>
+    <button class="cycle-step s1 active" data-cycle="0"><i>1</i><b>Identify</b><span>Start with an indicator</span></button>
+    <button class="cycle-step s2" data-cycle="1"><i>2</i><b>Contextualise</b><span>Why does it matter?</span></button>
+    <button class="cycle-step s3" data-cycle="2"><i>3</i><b>Pivot</b><span>Search data sources</span></button>
+    <button class="cycle-step s4" data-cycle="3"><i>4</i><b>Discover</b><span>Find the next indicator</span></button>
+  </div>
+  <div class="cycle-readout" id="cycleReadout"></div>
+
+  <details class="intel-drawer">
+    <summary>Open analyst notes <span>+</span></summary>
+    <div class="drawer-content">
+      <p><b>Indicators can be more than IPs.</b> Domains, hashes, URLs, email addresses, bank accounts and metadata can all become anchors.</p>
+      <p><b>Validate before spending time.</b> Even an indicator reported by a trusted third party should be independently contextualised.</p>
+      <p><b>Stop condition:</b> when you have enough evidence to conclude about the threat and cannot pivot any further.</p>
+    </div>
+  </details>
+
+  <div class="game-shell">
+    <div class="game-title"><span>GAME 1 · FIRST MOVE</span><h3>You receive a government email naming 125.19.103.198 as probable C2. What do you do first?</h3></div>
+    <div class="decision-grid" id="firstMove">
+      <button data-correct="false"><b>Block it immediately</b><span>Act before validating</span></button>
+      <button data-correct="true"><b>Contextualise + validate</b><span>Check source, WHOIS and external intelligence</span></button>
+      <button data-correct="false"><b>Reimage every laptop</b><span>Jump straight to containment</span></button>
+    </div>
+    <div class="game-feedback" id="firstMoveFeedback">Choose the most defensible analyst action.</div>
+  </div>
+</section>
+
+<section class="chapter dark" id="case">
+  <div class="chapter-tag">02 / THE INTRUSION CASE</div>
+  <div class="chapter-head">
+    <div><span class="kicker">ABC COMPANY · 125.19.103.198</span><h2>Build the case by making the right pivot.</h2></div>
+    <p>External intelligence tells you whether the report is plausible. Internal telemetry tells you whether your organisation was actually touched.</p>
+  </div>
+
+  <div class="pivot-console">
+    <div class="console-top"><span>ANALYST CONSOLE</span><small id="pivotStage">STAGE 1 / 5</small></div>
+    <div class="terminal-log" id="pivotLog">
+      <div><i>CASE</i> New third-party report received.</div>
+      <div><i>IOC</i> 125.19.103.198 — probable command-and-control address.</div>
+      <div class="prompt">Choose your next pivot →</div>
+    </div>
+    <div class="pivot-actions" id="pivotActions"></div>
+  </div>
+
+  <div class="evidence-strip">
+    <article><span>WHOIS</span><b>Registered in India</b><small>Useful context, not proof of malice.</small></article>
+    <article><span>VIRUSTOTAL</span><b>3 / 87 malicious</b><small>Enough to justify deeper investigation, not enough alone.</small></article>
+    <article><span>NETWORK</span><b>172.16.99.12 → C2</b><small>Resolves to ABC web proxy.</small></article>
+    <article><span>PROXY</span><b>3 compromised hosts</b><small>.4 · .14 · .23 communicate with C2.</small></article>
+  </div>
+
+  <details class="intel-drawer inverse">
+    <summary>Open raw case notes <span>+</span></summary>
+    <div class="drawer-content">
+      <p><b>Proxy log query:</b> <code>cat &lt;logfile&gt; | grep &lt;IP or domain&gt;</code> can surface every transaction containing the indicator.</p>
+      <p><b>New clue:</b> the logs expose <code>/sys/files/</code> and an FTP URL, which later become pivot anchors.</p>
+      <p><b>Corroboration:</b> matching timestamps across network and proxy logs make coincidence less likely and support escalation to IR/forensics.</p>
+    </div>
+  </details>
+</section>
+
+<section class="chapter" id="frameworks">
+  <div class="chapter-tag">03 / CLASSIFY THE INTELLIGENCE</div>
+  <div class="chapter-head">
+    <div><span class="kicker">DIAMOND MODEL + KILL CHAIN</span><h2>Frameworks show you what you know — and what is missing.</h2></div>
+    <p>The Diamond Model answers “who and what?” The Kill Chain answers “when and how far?” Use both on the same evidence.</p>
+  </div>
+
+  <div class="framework-layout">
+    <div class="diamond-lab">
+      <div class="lab-label">GAME 2 · BUILD THE DIAMOND</div>
+      <div class="diamond">
+        <div class="diamond-line"></div>
+        <button class="vertex v-adversary" data-slot="adversary"><span>ADVERSARY</span><b>Drop evidence</b></button>
+        <button class="vertex v-infra" data-slot="infrastructure"><span>INFRASTRUCTURE</span><b>Drop evidence</b></button>
+        <button class="vertex v-capability" data-slot="capability"><span>CAPABILITY / TTP</span><b>Drop evidence</b></button>
+        <button class="vertex v-victim" data-slot="victim"><span>VICTIM</span><b>Drop evidence</b></button>
+      </div>
+      <div class="evidence-bank" id="diamondBank">
+        <button draggable="true" data-type="infrastructure">125.19.103.198</button>
+        <button draggable="true" data-type="victim">192.168.8.4 / .14 / .23</button>
+        <button draggable="true" data-type="capability">Unknown at this stage</button>
+        <button draggable="true" data-type="adversary">Unknown at this stage</button>
+      </div>
+      <div class="game-feedback" id="diamondFeedback">Drag evidence onto a vertex, or click evidence then click a vertex.</div>
+    </div>
+
+    <div class="killchain-panel">
+      <div class="lab-label">DISCOVERY VIEW · INITIAL STATE</div>
+      <ol class="killchain">
+        <li><span>01</span><b>Reconnaissance</b><i>?</i></li>
+        <li><span>02</span><b>Weaponization</b><i>?</i></li>
+        <li><span>03</span><b>Delivery</b><i>?</i></li>
+        <li><span>04</span><b>Exploitation</b><i>?</i></li>
+        <li><span>05</span><b>Installation</b><i>?</i></li>
+        <li class="known"><span>06</span><b>Command & Control</b><i>125.19.103.198</i></li>
+        <li><span>07</span><b>Actions on Objectives</b><i>?</i></li>
+      </ol>
+      <p class="panel-note">A sparse Kill Chain is useful: every “?” is a research question.</p>
+    </div>
+  </div>
+
+  <div class="mini-game">
+    <div><span>FAST CHECK</span><h3>Which framework tells you the attack phase?</h3></div>
+    <div class="inline-choices" data-answer="Kill Chain"><button>Diamond Model</button><button>Kill Chain</button><button>WHOIS</button></div>
+    <small></small>
+  </div>
+</section>
+
+<section class="chapter dark" id="host">
+  <div class="chapter-tag">04 / NETWORK + HOST FORENSICS</div>
+  <div class="chapter-head">
+    <div><span class="kicker">FROM TRAFFIC TO PROCESS</span><h2>Follow the bytes, then follow the process.</h2></div>
+    <p>Network evidence reveals exfiltration; packet and memory evidence explain how it happened.</p>
+  </div>
+
+  <div class="traffic-lab">
+    <div class="traffic-head"><span>GAME 3 · EXFIL DETECTOR</span><h3>Which transfer deserves the strongest escalation?</h3></div>
+    <div class="traffic-bars" id="trafficBars">
+      <button data-correct="false"><span>10.1.2.9 → CDN</span><b style="--w:22%">220 MB</b><small>Known software update mirror</small></button>
+      <button data-correct="false"><span>192.168.8.44 → Backup</span><b style="--w:42%">640 MB</b><small>Scheduled internal backup</small></button>
+      <button data-correct="true"><span>Victim hosts → 125.19.103.198</span><b style="--w:88%">1–2.5+ GB</b><small>Known C2 relationship + outbound FTP</small></button>
+    </div>
+    <div class="game-feedback" id="trafficFeedback">Volume alone is not proof. Use context.</div>
+  </div>
+
+  <div class="packet-card">
+    <div><span>WIRESHARK CLUE</span><h3>Plain FTP exposes the story.</h3></div>
+    <div class="packet-stream">
+      <code><i>USER</i> admin.test</code>
+      <code><i>PASS</i> ********</code>
+      <code><i>RETR</i> file1.exe</code>
+      <code class="danger-code"><i>STOR</i> collected_data.rar</code>
+    </div>
+    <p>USER/PASS appear in plaintext. RETR downloads a file; STOR uploads <b>collected_data.rar</b>. With SFTP, the content would be much harder to inspect directly.</p>
+  </div>
+
+  <div class="forensics-terminal">
+    <div class="terminal-head"><span>GAME 4 · MEMORY FORENSICS COMMAND CHAIN</span><small>SIFT / Volatility</small></div>
+    <div class="terminal-screen" id="memoryScreen"><div class="prompt-line">analyst@sift:~$ <span>Choose the correct first command below.</span></div></div>
+    <div class="command-pad" id="commandPad"></div>
+    <div class="forensics-goal"><b>Goal:</b> process → connection → path → dump → hash → external confirmation</div>
+  </div>
+</section>
+
+<section class="chapter" id="malware">
+  <div class="chapter-tag">05 / MALWARE + ATTRIBUTION</div>
+  <div class="chapter-head">
+    <div><span class="kicker">BEHAVIOUR BEFORE BLAME</span><h2>Understand the malware. Treat attribution as confidence, not certainty.</h2></div>
+    <p>Static and dynamic analysis expose capability. Public reporting may suggest an actor, but attribution remains circumstantial unless the evidence supports certainty.</p>
+  </div>
+
+  <div class="malware-grid">
+    <article class="behaviour"><span>SANDBOX</span><b>Opens files</b><small>Observed behaviour</small></article>
+    <article class="behaviour"><span>SANDBOX</span><b>Writes files</b><small>Observed behaviour</small></article>
+    <article class="behaviour"><span>SANDBOX</span><b>Deletes logs</b><small>Defense evasion signal</small></article>
+    <article class="behaviour"><span>SANDBOX</span><b>Changes registry</b><small>Persistence / configuration signal</small></article>
+  </div>
+
+  <div class="attack-map">
+    <div class="map-title"><span>MITRE ATT&CK MAPPING</span><b>Eight observed techniques / tactics in the case study</b></div>
+    <div class="tactic-cloud">
+      <span>Execution</span><span>Persistence</span><span>Privilege Escalation</span><span>Defense Evasion</span><span>Credential Access</span><span>Discovery</span><span>Lateral Movement</span><span>Exfiltration</span>
+    </div>
+  </div>
+
+  <div class="attribution-game">
+    <div class="game-title"><span>GAME 5 · ATTRIBUTION CONFIDENCE</span><h3>Public reports link the malware to APT19 / Codoso. How should an analyst phrase the conclusion?</h3></div>
+    <div class="confidence-track">
+      <button data-confidence="low">No relationship at all</button>
+      <button data-confidence="right">Likely / supported by public reporting, not proven</button>
+      <button data-confidence="high">Definitely APT19 beyond doubt</button>
+    </div>
+    <div class="game-feedback" id="confidenceFeedback">Choose wording you would defend in an intelligence report.</div>
+  </div>
+
+  <details class="intel-drawer">
+    <summary>Open Project Cobra findings <span>+</span></summary>
+    <div class="drawer-content">
+      <p><b>Recovered archive:</b> <code>collected_data.rar</code> contains engineering material from a project named Cobra.</p>
+      <p><b>Likely motive:</b> the nature of the stolen product-design material supports a corporate-espionage hypothesis.</p>
+      <p><b>Hardening lesson:</b> encrypt valuable intellectual property internally and maintain multiple backups so a breach does not automatically yield useful plaintext data.</p>
+    </div>
+  </details>
+</section>
+
+<section class="chapter dark" id="rootcause">
+  <div class="chapter-tag">06 / ROOT CAUSE</div>
+  <div class="chapter-head">
+    <div><span class="kicker">PHISH → PDF → PROCESS</span><h2>Rewind the attack until you reach the first human click.</h2></div>
+    <p>The compromised host leads backward to a weaponized PDF, a targeted spear-phishing email and reconnaissance conducted months earlier.</p>
+  </div>
+
+  <div class="phish-lab">
+    <div class="email-window">
+      <div class="email-toolbar"><span>New research collaboration</span><small>Inspect clues</small></div>
+      <button class="hotspot h-from" data-clue="from">From: Catherine Majabu &lt;coordinator@exx-group.example&gt;</button>
+      <button class="hotspot h-subject" data-clue="subject">Subject: Research article for upcoming event</button>
+      <div class="email-body">Dear researcher,<br><br>I enjoyed your recent work. Please review the attached paper before our upcoming research event.<br><br>Regards,<br>Catherine</div>
+      <button class="attachment hotspot" data-clue="attachment">📎 research_tech.pdf</button>
+      <button class="hotspot received" data-clue="received">Received: from 194.150.215.153 …</button>
+    </div>
+    <div class="clue-panel">
+      <span>GAME 6 · PHISH FORENSICS</span>
+      <h3 id="clueTitle">Inspect the email.</h3>
+      <p id="clueText">Click the sender, subject, attachment or Received line to inspect it.</p>
+      <div class="clue-score"><b id="cluesFound">0 / 4</b><small>clues inspected</small></div>
+    </div>
+  </div>
+
+  <div class="recon-timeline">
+    <article><span>T - 3 MONTHS</span><b>Public article names department heads</b><p>Email addresses become OSINT.</p></article>
+    <i>→</i>
+    <article><span>RECON</span><b>41.168.5.201 visits individual staff pages</b><p>Apache logs show repeated profile access.</p></article>
+    <i>→</i>
+    <article><span>DELIVERY</span><b>Targeted research-themed email</b><p>Weaponized PDF reaches victim.</p></article>
+    <i>→</i>
+    <article><span>INSTALL</span><b>reader_sl.exe executes</b><p>Backdoor becomes active.</p></article>
+  </div>
+</section>
+
+<section class="chapter" id="misp">
+  <div class="chapter-tag">07 / COMPLETE + AUTOMATE</div>
+  <div class="chapter-head">
+    <div><span class="kicker">FROM ONE ANALYST TO ORGANISATIONAL MEMORY</span><h2>Turn the solved case into reusable intelligence.</h2></div>
+    <p>MISP captures the manual pivots, correlates them with feeds, enriches the event and lets the organisation share what it learned.</p>
+  </div>
+
+  <div class="full-chain">
+    <div class="chain-node"><span>RECON</span><b>Public staff pages</b></div><i>→</i>
+    <div class="chain-node"><span>DELIVERY</span><b>Phishing · 194.150.215.153</b></div><i>→</i>
+    <div class="chain-node"><span>EXPLOIT</span><b>research_tech.pdf</b></div><i>→</i>
+    <div class="chain-node"><span>INSTALL</span><b>reader_sl.exe</b></div><i>→</i>
+    <div class="chain-node"><span>C2</span><b>125.19.103.198</b></div><i>→</i>
+    <div class="chain-node"><span>ACTIONS</span><b>Project Cobra exfil</b></div>
+  </div>
+
+  <div class="misp-builder">
+    <div class="misp-head"><span>GAME 7 · BUILD THE MISP EVENT</span><small id="mispStatus">0 / 4 steps complete</small></div>
+    <div class="misp-steps">
+      <button data-misp="feeds"><i>1</i><b>Enable feeds</b><span>Bring external indicators into correlation.</span></button>
+      <button data-misp="event"><i>2</i><b>Create event</b><span>Record date, distribution and threat level.</span></button>
+      <button data-misp="attributes"><i>3</i><b>Add + enrich attributes</b><span>C2 IP, domains, hashes, email infrastructure.</span></button>
+      <button data-misp="publish"><i>4</i><b>Publish</b><span>Share when analysis is ready.</span></button>
+    </div>
+    <div class="misp-screen" id="mispScreen">Select the correct first operational step.</div>
+  </div>
+
+  <div class="synthesis">
+    <article><b>1</b><span>Identify</span></article>
+    <article><b>2</b><span>Contextualise</span></article>
+    <article><b>3</b><span>Pivot</span></article>
+    <article><b>4</b><span>Discover</span></article>
+    <i>↻</i>
+    <strong>Manual skill first. Automation scales it.</strong>
+  </div>
+</section>
+
+<section class="chapter final" id="final">
+  <div class="chapter-tag">08 / FINAL BRIEFING</div>
+  <div class="chapter-head">
+    <div><span class="kicker">CASE REVIEW</span><h2>Can you defend the investigation?</h2></div>
+    <p>Eight questions. Immediate feedback. The goal is not memorising tools — it is understanding why each pivot was defensible.</p>
+  </div>
+  <div id="finalQuiz" class="final-quiz"></div>
+</section>
+</main>
+
+<footer><b>COMP6012 · WEEK 11</b><span>Threat Modeling and Analysis — Practical Use Cases</span><span>Operation Cobra</span></footer>
+<script src="app.js"></script>
+</body>
+</html>
